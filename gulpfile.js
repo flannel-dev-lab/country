@@ -1,11 +1,19 @@
+// Include gulp and plugins
+var gulp = require('gulp');
 var jsonlint = require('gulp-jsonlint');
-var log = require('fancy-log');
+var gutil = require('gulp-util');
 
-gulp.src('./src/*.json')
+gulp.task('lint', function () {
+  return gulp.src('./src/*.json')
     .pipe(jsonlint())
-    .pipe(jsonlint.reporter(failureReporter));
+    .pipe(jsonlint.reporter(failReporter));
+});
 
 // Custom reporter for jsonlint to ensure Gulp exits correctly on fail for Travis tests.
-var failureReporter = function (file) {
-    log('File ' + file.path + ' is not valid JSON.');
+var failReporter = function (file) {
+  if (file.jsonlint && !file.jsonlint.success) {
+    throw new gutil.PluginError('gulp-jsonlint', file.jsonlint.message);
+  }
 };
+
+gulp.task('ci', ['lint']);
