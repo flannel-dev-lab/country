@@ -9,5 +9,3 @@ gulp.src('./src/*.json')
 var failureReporter = function (file) {
     log('File ' + file.path + ' is not valid JSON.');
 };
-
-gulp.task('ci', ['lint']);
